@@ -6,6 +6,31 @@
  */
 
 /**
+ * Load the UUID behavior.
+ *
+ * CTools doesn't load all the plugins correctly upon installation, so we reset
+ * the plugins cache, so our Entity reference behaviors will be used.
+ * Apart of Calling ctools_get_plugins_reset() we also get all the entity
+ * reference "behavior" plugins and load the class ourself.
+ * This issue can be seen when executing simpleTests or enabling the module
+ * via Drush.
+ */
+function entityreference_uuid_load_behavior() {
+  ctools_include('plugins');
+  ctools_get_plugins_reset();
+  module_load_include('php', 'praise_general', 'entityreference/behavior/UuidEntityReferenceBehavior.class');
+  ctools_get_plugins('entityreference', 'behavior');
+}
+
+/**
+ * Implements hook_field_default_field_bases().
+ */
+function praise_general_field_default_field_bases() {
+  entityreference_uuid_load_behavior();
+}
+
+
+/**
  * Implements hook_ctools_plugin_directory().
  */
 function entityreference_uuid_ctools_plugin_directory($module, $plugin) {
