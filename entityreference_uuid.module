@@ -29,7 +29,6 @@ function praise_general_field_default_field_bases() {
   entityreference_uuid_load_behavior();
 }
 
-
 /**
  * Implements hook_ctools_plugin_directory().
  */
