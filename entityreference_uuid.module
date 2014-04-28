@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Add UUID column to entity reference.
+ */
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function entityreference_uuid_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'ctools') {
+    return 'entityreference/' . $plugin;
+  }
+}
+
+/**
+ * Implements hook_entity_presave().
+ */
+function entityreference_uuid_entity_presave($entity, $type) {
+  if (!$field_name = variable_get('entityreference_uuid_field_name', 'field_uuid')) {
+    // No UUID field name defined.
+    return;
+  }
+
+  if (!variable_get('entityreference_uuid_set_uuid_on_presave', TRUE)) {
+    // Admin turned off this option.
+    return;
+  }
+
+  $wrapper = entity_metadata_wrapper($type, $entity);
+  if (!isset($wrapper->{$field_name}) || $wrapper->{$field_name}->value()) {
+    // Field doesn't exist, or UUID already exists.
+    return;
+  }
+
+  $wrapper->{$field_name}->set(md5(rand()));
+}

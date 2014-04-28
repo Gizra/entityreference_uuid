@@ -1,0 +1,4 @@
+name = Entity reference UUID
+description = Add UUID column to entity reference.
+core = 7.x
+dependencies[] = entityreference
