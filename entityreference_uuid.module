@@ -66,7 +66,7 @@ function entityreference_uuid_entity_presave($entity, $type) {
  *
  * Hide the UUID field.
  */
-function entityreference_uuid_field_access($op, $field, $entity_type, $entity, $account)) {
+function entityreference_uuid_field_access($op, $field, $entity_type, $entity, $account) {
   if (!variable_get('entityreference_uuid_field_access', TRUE)) {
     // Admin turned off this option.
     return;
