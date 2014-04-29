@@ -60,3 +60,27 @@ function entityreference_uuid_entity_presave($entity, $type) {
 
   $wrapper->{$field_name}->set(md5(rand()));
 }
+
+/**
+ * Implements hook_field_access().
+ *
+ * Hide the UUID field.
+ */
+function entityreference_uuid_field_access($op, $field, $entity_type, $entity, $account)) {
+  if (!variable_get('entityreference_uuid_field_access', TRUE)) {
+    // Admin turned off this option.
+    return;
+  }
+
+  if (!$field_name = variable_get('entityreference_uuid_field_name', 'field_uuid')) {
+    // No UUID field name defined.
+    return;
+  }
+
+  if ($field['field_name'] != $field_name) {
+    // Not a UUID field.
+    return;
+  }
+
+  return FALSE;
+}

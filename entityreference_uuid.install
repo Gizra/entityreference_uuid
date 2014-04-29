@@ -10,6 +10,7 @@
  * Implements hook_uninstall().
  */
 function entityreference_uuid_uninstall() {
+  variable_del('entityreference_uuid_field_access');
   variable_del('entityreference_uuid_field_name');
   variable_del('entityreference_uuid_set_uuid_on_presave');
 }
