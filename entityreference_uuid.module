@@ -18,7 +18,7 @@
 function entityreference_uuid_load_behavior() {
   ctools_include('plugins');
   ctools_get_plugins_reset();
-  module_load_include('php', 'praise_general', 'entityreference/behavior/UuidEntityReferenceBehavior.class');
+  module_load_include('php', 'entityreference_uuid', 'entityreference/behavior/UuidEntityReferenceBehavior.class');
   ctools_get_plugins('entityreference', 'behavior');
 }
 
