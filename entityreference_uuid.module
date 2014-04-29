@@ -25,7 +25,7 @@ function entityreference_uuid_load_behavior() {
 /**
  * Implements hook_field_default_field_bases().
  */
-function praise_general_field_default_field_bases() {
+function entityreference_uuid_field_default_field_bases() {
   entityreference_uuid_load_behavior();
 }
 
