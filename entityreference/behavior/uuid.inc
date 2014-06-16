@@ -5,5 +5,4 @@ $plugin = array(
   'description' => t('Add UUID to the reference field.'),
   'class' => 'UuidEntityReferenceBehavior',
   'behavior type' => 'field',
-  'force enabled' => TRUE,
 );

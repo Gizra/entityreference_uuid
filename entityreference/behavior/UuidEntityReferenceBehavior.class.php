@@ -34,11 +34,7 @@ class UuidEntityReferenceBehavior extends EntityReference_BehaviorHandler_Abstra
     }
     $original_items = $items;
     $target_type = $field['settings']['target_type'];
-    $uuid_field_name = variable_get('uuid_reference_field_name', 'field_uuid');
-    if (!field_info_field($uuid_field_name)) {
-      // UUID field doesn't exist.
-      return;
-    }
+    $uuid_field_name = variable_get('entityreference_uuid_field_name', 'field_uuid');
 
     foreach($original_items as $entity_id => $original_items) {
       foreach ($original_items as $delta => $item) {
@@ -46,9 +42,19 @@ class UuidEntityReferenceBehavior extends EntityReference_BehaviorHandler_Abstra
           // Target ID is populated, or UUID is not.
           continue;
         }
+
         $query = new EntityFieldQuery();
+
+        if (!field_info_field($uuid_field_name)) {
+          // Field is actually a property (e.g. node ID).
+          $query->propertyCondition($uuid_field_name, $item['uuid']);
+        }
+        else {
+          $query->fieldCondition($uuid_field_name, 'value', $item['uuid']);
+        }
+
+
         $result = $query->entityCondition('entity_type', $target_type)
-          ->fieldCondition($uuid_field_name, 'value', $item['uuid'])
           ->range(0, 1)
           ->execute();
 
@@ -66,36 +72,13 @@ class UuidEntityReferenceBehavior extends EntityReference_BehaviorHandler_Abstra
    * Save UUID along with the referenced entity ID.
    */
   public function presave($entity_type, $entity, $field, $instance, $langcode, &$items) {
-    $uuid_field_name = variable_get('uuid_reference_field_name', 'field_uuid');
-    if (!field_info_field($uuid_field_name)) {
-      // UUID field doesn't exist.
-      return;
-    }
-
-    $field_name = $field['field_name'];
-    $cardinality = $field['cardinality'];
-
-    $wrapper = entity_metadata_wrapper($entity_type, $entity);
-
-    $uuids = array();
-
-    if ($cardinality == 1) {
-      if ($id = $wrapper->{$field_name}->getIdentifier()) {
-        $uuids[$id] = $wrapper->{$field_name}->{$uuid_field_name}->value();
-      }
-    }
-    else {
-      foreach ($wrapper->{$field_name} as $sub_wrapper) {
-        $id = $sub_wrapper->getIdentifier();
-        $uuids[$id] = $sub_wrapper->{$uuid_field_name}->value();
-      }
-    }
-
+    $uuid_field_name = variable_get('entityreference_uuid_field_name', 'field_uuid');
+    $target_type = $field['settings']['target_type'];
 
     foreach ($items as &$item) {
-      if (!empty($item['target_id'])) {
-        $id = $item['target_id'];
-        $item['uuid'] = $uuids[$id];
+      if (!empty($item['target_id']) && empty($item['uuid'])) {
+        $wrapper = entity_metadata_wrapper($target_type, $item['target_id']);
+        $item['uuid'] = $wrapper->{$uuid_field_name}->value();
       }
     }
   }

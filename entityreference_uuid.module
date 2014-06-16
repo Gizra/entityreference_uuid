@@ -33,7 +33,7 @@ function entityreference_uuid_field_default_field_bases() {
  * Implements hook_ctools_plugin_directory().
  */
 function entityreference_uuid_ctools_plugin_directory($module, $plugin) {
-  if ($module == 'ctools') {
+  if ($module == 'entityreference') {
     return 'entityreference/' . $plugin;
   }
 }
@@ -44,6 +44,11 @@ function entityreference_uuid_ctools_plugin_directory($module, $plugin) {
 function entityreference_uuid_entity_presave($entity, $type) {
   if (!$field_name = variable_get('entityreference_uuid_field_name', 'field_uuid')) {
     // No UUID field name defined.
+    return;
+  }
+
+  if (!field_info_field($field_name)) {
+    // The field name is actually a property (e.g. the node ID).
     return;
   }
 
